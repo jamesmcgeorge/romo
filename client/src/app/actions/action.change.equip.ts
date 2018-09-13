@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import { Action, ActionReturn, SocketAction, SocketActionUpdate, ActionType } from './action';
+import { Action, ActionReturn, SocketAction, ISocketActionUpdate, ActionType } from './action';
 import { getUserIDFromJWT } from '../services/jwt.service';
 import { ActionService } from '../services/action.service';
 import { Slot } from '../objects/slot';
@@ -53,7 +53,7 @@ export class ActionChangeEquipment extends Action {
             console.log('Socket is missing? ', this.socket);
         }
     }
-    finalizeAction(msg: SocketActionUpdate) {
+    finalizeAction(msg: ISocketActionUpdate) {
         super.finalizeAction(msg);
         // console.log(msg);
         const update = msg.update;
