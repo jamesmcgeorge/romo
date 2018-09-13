@@ -2,24 +2,8 @@ import * as ex from 'excalibur';
 import { Action, IActionReturn, SocketAction, ISocketActionUpdate, ActionType } from './action';
 import { Creature } from '../objects/creature';
 import { getUserIDFromJWT } from '../services/jwt.service';
-import { Cell } from 'Index';
 import { Player } from '../objects/player';
 import { ActionService } from '../services/action.service';
-
-export interface IActionAttack {
-    target: string;
-    part: number;
-    dmg: {
-        hp: number;
-        mp: number;
-        st: number;
-    };
-    stats: {
-        hp: number;
-        mp: number;
-        st: number;
-    };
-}
 
 interface IPartDamage {
     /** The index of the body part hit on the target */
@@ -59,8 +43,7 @@ export interface IActionAttackPackageNew {
 }
 
 export class ActionAttack extends Action {
-    cell: Cell;
-    target: Creature;
+    private target: Creature;
 
     constructor(owner: Player, target: Creature, actionService: ActionService) {
         super(owner, 'Talk', actionService);
@@ -71,6 +54,7 @@ export class ActionAttack extends Action {
         super.perform();
         this.sendCommand();
     }
+
     checkCanPerform(engine: ex.Engine): IActionReturn {
         const actionReturn: IActionReturn = {
             canPerform: false,
@@ -81,6 +65,7 @@ export class ActionAttack extends Action {
         }
         return actionReturn;
     }
+
     sendCommand() {
         if (this.socket) {
             const action: SocketAction = {
@@ -98,6 +83,7 @@ export class ActionAttack extends Action {
             console.log('Socket is missing? ', this.socket);
         }
     }
+
     finalizeAction(msg: ISocketActionUpdate) {
         super.finalizeAction(msg);
         const update = msg.update as IActionAttackPackageNew;
