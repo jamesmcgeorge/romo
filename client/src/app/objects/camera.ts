@@ -1,6 +1,7 @@
 import * as ex from 'excalibur';
 import { Vector } from 'excalibur';
 
+/** Camera strategy to stop the camera moving past the bounds of the current map but keeping the player centered as long as possible */
 export class LockCameraToActorWithinTileMapBoundsStrategy implements ex.ICameraStrategy<ex.Actor> {
     constructor(public target: ex.Actor, public mapHeight: number, public mapWidth: number) {}
 
