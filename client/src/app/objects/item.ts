@@ -1,8 +1,10 @@
 import {Material} from './material';
 
+/** Item quality interface */
 export interface IQuality {
     name: string;
     index: number;
+    /** Effect this quality has on the value of the Item */
     valueMult: number;
 }
 
@@ -14,7 +16,7 @@ export enum ItemType {
     bag,
     ring,
 }
-
+/** Interface to send Item data over socket */
 export interface ISocketItem {
     /** The material index of the item */
     m: number;
@@ -54,7 +56,7 @@ export class Item {
             // do something about the enhancement? do all items need this? Maybe only weapons?
         }
     }
-
+    /** Gets the description for the item to display in the inventory screen */
     get description() {
         const str = `
 Weight: ${this.weight.toFixed(2)}
@@ -64,16 +66,16 @@ Material: ${this.material.name}
 `;
     return str;
     }
-
-    calculateWeight() {
+    /** Calculate the weight of the item by it's components */
+    private calculateWeight() {
         this.weight = this.baseWeight;
         this.weight *= this.material.weightMult;
         if (this.techMagic) {
             this.weight *= this.techMagic.weightMult;
         }
     }
-
-    caclculateValue() {
+    /** Calculate the value of the item by it's components */
+    private caclculateValue() {
         this.value = this.baseValue;
         this.value *= this.material.valueMult;
         if (this.techMagic) {
