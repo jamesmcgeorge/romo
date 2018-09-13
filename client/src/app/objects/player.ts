@@ -11,11 +11,15 @@ interface ISeenTiles {
 
 
 export class Player extends Creature {
+    /** The name of the player's current map for easy reference */
     public currentMapName: string;
+    /** Which tiles has the player seen, used by the fogService, could be moved into the fogService itself */
     public seenTiles: ISeenTiles;
+    /** The GMSservice instance */
     public gmService: GMService;
+    /** The InputService instance */
     public inputService: InputService;
-
+    /** Timer to keep track of the last time the player performed an action */
     private lastActionTime: number = 1000;
 
     public onInitialize(engine: ex.Engine) {
@@ -37,6 +41,11 @@ export class Player extends Creature {
         this.lastActionTime += delta;
 
     }
+    /**
+     * Processes input, currently keyboard from here
+     * @param engine Excalibur game engine instance
+     * @param delta delta time, not currently used
+     */
     private processInput(engine: ex.Engine, delta: number) {
         // console.log('Key pressed')
         const action = this.inputService.getKeyboardInputAction(engine);
@@ -45,9 +54,16 @@ export class Player extends Creature {
             this.setNextAction(action);
         }
     }
+    /**
+     * Sets the players socket
+     * @param socket socket to set
+     */
     public setSocket(socket: SocketIOClient.Socket) {
         super.setSocket(socket);
     }
+    /**
+     * Gets the socket assigned to the player
+     */
     public getSocket() {
         return super.getSocket();
     }
