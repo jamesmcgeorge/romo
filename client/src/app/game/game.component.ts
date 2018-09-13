@@ -3,7 +3,6 @@ import 'rxjs/add/operator/toPromise';
 
 import * as ex from 'excalibur';
 import { GMService } from '../services/gm.service';
-import {Player} from '../objects/player';
 import { SocketService } from '../services/socket.service';
 
 @Component({
@@ -13,11 +12,9 @@ import { SocketService } from '../services/socket.service';
   encapsulation: ViewEncapsulation.None
 })
 export class GameComponent implements OnInit {
-    game: ex.Engine;
-    player: Player;
-    socket: SocketIOClient.Socket;
+    private game: ex.Engine;
+    private socket: SocketIOClient.Socket;
 
-    // kGame: Kiwi.Game;
 
     constructor(private gmService: GMService,
         private socketService: SocketService) { }
@@ -25,7 +22,7 @@ export class GameComponent implements OnInit {
     ngOnInit() {
         this.organiseGame();
     }
-
+    /** Setup the game for play */
     async organiseGame() {
         this.setupCanvas();
         this.setupSocket();
@@ -38,7 +35,7 @@ export class GameComponent implements OnInit {
             this.gmService.clearResources();
         }
     }
-
+    /** Setup the canvas for Excalibur */
     setupCanvas() {
         this.game = new ex.Engine({
             canvasElementId: 'game',
@@ -50,7 +47,7 @@ export class GameComponent implements OnInit {
         ex.Physics.collisionResolutionStrategy = ex.CollisionResolutionStrategy.Box;
         ex.Physics.checkForFastBodies = false;
     }
-
+    /** Setup the socket via socketService */
     setupSocket() {
         this.socketService.init();
         console.log('Socket Created');
