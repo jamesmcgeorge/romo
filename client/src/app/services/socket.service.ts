@@ -1,21 +1,16 @@
-import { Observable } from 'rxjs/Observable';
-import { MessageType, SocketMessage } from '../../floppycarrot';
 import * as io from 'socket.io-client';
 import { Injectable } from '@angular/core';
 import { getUserIDFromJWT } from './jwt.service';
 import { config } from '../app.config';
 
-interface ListenerMap {
-    type: string;
-    function: Function;
-}
-
 @Injectable()
 export class SocketService {
     private url = config.socket.main;
     private socket: SocketIOClient.Socket;
+    /** possibly redundant with the player's instance of currentMapName */
     public currentMapRoom: string = null;
 
+    /** Initlizes the socket */
     init() {
         const token = localStorage.getItem('token');
         this.socket = io.connect(this.url, {
@@ -35,12 +30,19 @@ export class SocketService {
     disconnect() {
         this.socket.disconnect();
     }
+    /** Sends logout message to the socket server */
     logout() {
         this.socket.emit('logout');
     }
+    /** Sends the stuck message to the server */
     stuck() {
         this.socket.emit('stuck', {sessionID: getUserIDFromJWT(), roomName: this.currentMapRoom});
     }
+    /**
+     * Join a new map room on the socket
+     * @param roomName The name of the map to join
+     * @param playerName The name of the player
+     */
     joinRoom(roomName: string, playerName: string) {
         if (this.currentMapRoom === null) {
             this.socket.emit('join_room', {
@@ -53,36 +55,9 @@ export class SocketService {
             console.error('Cannot join map room without leaving other first');
         }
     }
+    /** Leave the socket map room the player is currently in */
     leaveRoom() {
         this.socket.emit('leave_room', {userID: getUserIDFromJWT(), roomName: this.currentMapRoom});
         this.currentMapRoom = null;
-    }
-    setupListeners(listenerArray: ListenerMap[]) {
-        for (const listener of listenerArray) {
-            this.socket.on(listener.type, listener.function);
-        }
-    }
-
-    send(type: string, data: any) {
-        this.socket.emit(type, data);
-    }
-
-    sendMessage(message) {
-        this.socket.emit('add-message', {userId: getUserIDFromJWT(), type: MessageType.chat, time: Date.now(), data: message});
-    }
-
-    getMessages() {
-        const observable = new Observable(observer => {
-            this.socket = io(this.url);
-            this.socket.on('message', (message: SocketMessage) => {
-                console.log(message);
-                message.convertedTime = new Date(message.time).toLocaleTimeString();
-                observer.next(message);
-            });
-            return () => {
-                this.socket.disconnect();
-            };
-        });
-        return observable;
     }
 }
